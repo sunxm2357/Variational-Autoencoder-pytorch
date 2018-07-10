@@ -5,6 +5,7 @@ import torch.nn.init as init
 import torch.utils.data
 
 from data_loaders.cifar10_data_loader import CIFAR10DataLoader
+from data_loaders.kth_data_loader import KTHDataLoader
 from graph.ce_loss import Loss as Loss_ce
 from graph.mse_loss import Loss as Loss_mse
 from graph.ce_model import VAE as VAE_ce
@@ -13,6 +14,7 @@ from train.ce_trainer import Trainer as Trainer_ce
 from train.mse_trainer import Trainer as Trainer_mse
 from utils.utils import *
 from utils.weight_initializer import Initializer
+import pdb
 
 
 def main():
@@ -24,9 +26,9 @@ def main():
         args.experiment_dir)
 
     if args.loss == 'ce':
-        model = VAE_ce()
+        model = VAE_ce(args.input_shape.channels)
     else:
-        model = VAE_mse()
+        model = VAE_mse(args.input_shape.n_channels)
 
     # to apply xavier_uniform:
     Initializer.initialize(model=model, initialization=init.xavier_uniform, gain=init.calculate_gain('relu'))
@@ -44,7 +46,10 @@ def main():
         cudnn.benchmark = True
 
     print("Loading Data...")
-    data = CIFAR10DataLoader(args)
+    if args.dataset == 'CIFAR10':
+        data = CIFAR10DataLoader(args)
+    elif args.dataset == 'KTH':
+        data = KTHDataLoader(args)
     print("Data loaded successfully\n")
 
     if args.loss == 'ce':

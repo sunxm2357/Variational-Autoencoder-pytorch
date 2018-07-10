@@ -6,6 +6,7 @@ from tensorboardX import SummaryWriter
 import shutil
 from tqdm import tqdm
 import numpy as np
+import pdb
 
 class Trainer:
     def __init__(self, model, loss, train_loader, test_loader, args):
@@ -31,7 +32,8 @@ class Trainer:
         for epoch in range(self.args.start_epoch, self.args.num_epochs):
             loss_list = []
             print("epoch {}...".format(epoch))
-            for batch_idx, (data, _) in enumerate(tqdm(self.train_loader)):
+            for batch_idx, (data, label) in enumerate(tqdm(self.train_loader)):
+
                 if self.args.cuda:
                     data = data.cuda()
                 data = Variable(data)
@@ -40,13 +42,13 @@ class Trainer:
                 loss = self.loss(recon_batch, data, mu, logvar)
                 loss.backward()
                 self.optimizer.step()
-                loss_list.append(loss.data[0])
+                loss_list.append(loss.data)
 
             print("epoch {}: - loss: {}".format(epoch, np.mean(loss_list)))
             new_lr = self.adjust_learning_rate(epoch)
             print('learning rate:', new_lr)
 
-            self.summary_writer.add_scalar('training/loss', np.mean(loss_list), epoch)
+            self.summary_writer.add_scalar('training/loss', float(np.mean(loss_list)), epoch)
             self.summary_writer.add_scalar('training/learning_rate', new_lr, epoch)
             self.save_checkpoint({
                 'epoch': epoch + 1,
@@ -71,7 +73,7 @@ class Trainer:
             if i == 0:
                 n = min(data.size(0), 8)
                 comparison = torch.cat([data[:n],
-                                        indices.view(-1, 3, 32, 32)[:n]])
+                                        indices.view(-1, self.args.input_shape.channels, 32, 32)[:n]])
                 self.summary_writer.add_image('testing_set/image', comparison, cur_epoch)
 
         test_loss /= len(self.test_loader.dataset)
@@ -94,7 +96,7 @@ class Trainer:
             if i % 50 == 0:
                 n = min(data.size(0), 8)
                 comparison = torch.cat([data[:n],
-                                        indices.view(-1, 3, 32, 32)[:n]])
+                                        indices.view(-1, self.args.input_shape.channels, 32, 32)[:n]])
                 self.summary_writer.add_image('training_set/image', comparison, i)
 
         test_loss /= len(self.test_loader.dataset)

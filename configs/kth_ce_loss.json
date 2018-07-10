@@ -1,15 +1,17 @@
 {
-  "experiment_dir": "debug_VAE_CIFAR10_ce_loss_ld_512",
+  "experiment_dir": "VAE_KTH_ce_loss_ld_512",
 
   "num_epochs": 800,
   "seed": 1,
 
-  "dataset": "CIFAR10",
+  "dataset": "KTH",
+  "dataroot": "/scratch4/datasets/KTH/",
+  "textroot": "./videolist/kth_action/",
   "loss": "ce",
   "input_shape":{
     "width": 32,
     "hight": 32,
-    "channels": 3
+    "channels": 1
   },
   "num_classes": 10,
   "dataloader_workers": 4,

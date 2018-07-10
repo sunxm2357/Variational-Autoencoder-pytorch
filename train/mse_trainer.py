@@ -6,6 +6,7 @@ from tensorboardX import SummaryWriter
 import shutil
 from tqdm import tqdm
 import numpy as np
+import pdb
 
 
 class Trainer:
@@ -41,13 +42,12 @@ class Trainer:
                 loss = self.loss(recon_batch, data, mu, logvar)
                 loss.backward()
                 self.optimizer.step()
-                loss_list.append(loss.data[0])
+                loss_list.append(loss.data)
 
             print("epoch {}: - loss: {}".format(epoch, np.mean(loss_list)))
             new_lr = self.adjust_learning_rate(epoch)
             print('learning rate:', new_lr)
-
-            self.summary_writer.add_scalar('training/loss', np.mean(loss_list), epoch)
+            self.summary_writer.add_scalar('training/loss', float(np.mean(loss_list)), epoch)
             self.summary_writer.add_scalar('training/learning_rate', new_lr, epoch)
             self.save_checkpoint({
                 'epoch': epoch + 1,
@@ -70,7 +70,7 @@ class Trainer:
             if i == 0:
                 n = min(data.size(0), 8)
                 comparison = torch.cat([data[:n],
-                                        recon_batch.view(-1, 3, 32, 32)[:n]])
+                                        recon_batch.view(-1, self.args.input_shape.channels, 32, 32)[:n]])
                 self.summary_writer.add_image('testing_set/image', comparison, cur_epoch)
 
         test_loss /= len(self.test_loader.dataset)
@@ -91,7 +91,7 @@ class Trainer:
             if i % 50 == 0:
                 n = min(data.size(0), 8)
                 comparison = torch.cat([data[:n],
-                                        recon_batch.view(-1, 3, 32, 32)[:n]])
+                                        recon_batch.view(-1, self.args.input_shape.channels, 32, 32)[:n]])
                 self.summary_writer.add_image('training_set/image', comparison, i)
 
         test_loss /= len(self.test_loader.dataset)

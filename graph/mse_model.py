@@ -3,11 +3,11 @@ from torch.autograd import Variable
 
 
 class VAE(nn.Module):
-    def __init__(self):
+    def __init__(self, n_channels):
         super(VAE, self).__init__()
 
         # Encoder
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(n_channels, 16, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(16)
         self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=2, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(32)
@@ -33,7 +33,7 @@ class VAE(nn.Module):
         self.bn6 = nn.BatchNorm2d(32)
         self.conv7 = nn.ConvTranspose2d(32, 16, kernel_size=3, stride=2, padding=1, output_padding=1, bias=False)
         self.bn7 = nn.BatchNorm2d(16)
-        self.conv8 = nn.ConvTranspose2d(16, 3, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv8 = nn.ConvTranspose2d(16, n_channels, kernel_size=3, stride=1, padding=1, bias=False)
 
         self.relu = nn.ReLU()
 
