@@ -6,6 +6,7 @@ from tensorboardX import SummaryWriter
 import shutil
 from tqdm import tqdm
 import numpy as np
+from utils.utils import one_hot
 import pdb
 
 class Trainer:
@@ -13,7 +14,7 @@ class Trainer:
         self.model = model
         self.args = args
         self.args.start_epoch = 0
-
+        self.num_categories = args.num_categories
         self.train_loader = train_loader
         self.test_loader = test_loader
 
@@ -33,12 +34,12 @@ class Trainer:
             loss_list = []
             print("epoch {}...".format(epoch))
             for batch_idx, (data, label) in enumerate(tqdm(self.train_loader)):
-
+                one_hot_matrix = Variable(one_hot(label, self.num_categories))
                 if self.args.cuda:
                     data = data.cuda()
                 data = Variable(data)
                 self.optimizer.zero_grad()
-                recon_batch, mu, logvar = self.model(data)
+                recon_batch, mu, logvar = self.model(data, one_hot_matrix)
                 loss = self.loss(recon_batch, data, mu, logvar)
                 loss.backward()
                 self.optimizer.step()

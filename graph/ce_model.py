@@ -3,7 +3,7 @@ from torch.autograd import Variable
 
 
 class VAE(nn.Module):
-    def __init__(self, n_channels):
+    def __init__(self, n_channels, num_categories):
         super(VAE, self).__init__()
         self.channels = n_channels
         # Encoder
@@ -18,11 +18,11 @@ class VAE(nn.Module):
 
         self.fc1 = nn.Linear(8 * 8 * 16, 512)
         self.fc_bn1 = nn.BatchNorm1d(512)
-        self.fc21 = nn.Linear(512, 512)
-        self.fc22 = nn.Linear(512, 512)
+        self.fc21 = nn.Linear(512 + num_categories, 512)
+        self.fc22 = nn.Linear(512 + num_categories, 512)
 
         # Decoder
-        self.fc3 = nn.Linear(512, 512)
+        self.fc3 = nn.Linear(512 + num_categories, 512)
         self.fc_bn3 = nn.BatchNorm1d(512)
         self.fc4 = nn.Linear(512, 8 * 8 * 16)
         self.fc_bn4 = nn.BatchNorm1d(8 * 8 * 16)
