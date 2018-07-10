@@ -26,7 +26,7 @@ def main():
         args.experiment_dir)
 
     if args.loss == 'ce':
-        model = VAE_ce(args.input_shape.channels)
+        model = VAE_ce(args.input_shape.channels, args.num_categories)
     else:
         model = VAE_mse(args.input_shape.n_channels)
 

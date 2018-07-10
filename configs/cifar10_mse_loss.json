@@ -8,7 +8,7 @@
   "loss": "mse",
   "input_shape":{
     "width": 32,
-    "hight": 32,
+    "height": 32,
     "channels": 3
   },
   "num_classes": 10,

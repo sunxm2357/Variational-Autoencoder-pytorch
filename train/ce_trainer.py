@@ -63,11 +63,12 @@ class Trainer:
         print('testing...')
         self.model.eval()
         test_loss = 0
-        for i, (data, _) in enumerate(self.test_loader):
+        for i, (data, label) in enumerate(self.test_loader):
+            one_hot_matrix = Variable(one_hot(label, self.num_categories))
             if self.args.cuda:
                 data = data.cuda()
             data = Variable(data, volatile=True)
-            recon_batch, mu, logvar = self.model(data)
+            recon_batch, mu, logvar = self.model(data, one_hot_matrix)
             test_loss += self.loss(recon_batch, data, mu, logvar).data[0]
             _, indices = recon_batch.max(1)
             indices.data = indices.data.float() / 255
@@ -86,11 +87,12 @@ class Trainer:
         print('testing...')
         self.model.eval()
         test_loss = 0
-        for i, (data, _) in enumerate(self.train_loader):
+        for i, (data, label) in enumerate(self.train_loader):
+            one_hot_matrix = Variable(one_hot(label, self.num_categories))
             if self.args.cuda:
                 data = data.cuda()
             data = Variable(data, volatile=True)
-            recon_batch, mu, logvar = self.model(data)
+            recon_batch, mu, logvar = self.model(data, one_hot_matrix)
             test_loss += self.loss(recon_batch, data, mu, logvar).data[0]
             _, indices = recon_batch.max(1)
             indices.data = indices.data.float() / 255

@@ -1,5 +1,5 @@
 {
-  "experiment_dir": "VAE_KTH_ce_loss_ld_512",
+  "experiment_dir": "VAE_KTH_cond_ce_loss_ld_512",
 
   "num_epochs": 800,
   "seed": 1,
@@ -8,9 +8,10 @@
   "dataroot": "/scratch4/datasets/KTH/",
   "textroot": "./videolist/kth_action/",
   "loss": "ce",
+  "num_categories": 6,
   "input_shape":{
-    "width": 64,
-    "height": 64,
+    "width": 32,
+    "height": 32,
     "channels": 1
   },
   "num_classes": 10,
